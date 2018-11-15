@@ -1,6 +1,6 @@
 var staticCacheName = 'restaurant-stg1-cache';
 
-let urlToCache = [
+let filesToCache = [
     '/',
     '/index.html',
     './restaurant.html',
@@ -20,25 +20,24 @@ let urlToCache = [
     './img/9.jpg',
     './img/10.jpg',
 ];
-self.addEventListener('install', function (event) {
 
-    event.waitUntil(
+self.addEventListener('install', function(e) {
+    e.waitUntil(
         caches.open(staticCacheName).then(function (cache) {
             console.log(cache);
-            return cache.addAll(urlToCache);
-
+            return cache.addAll(filesToCache);
         }).catch(error => {
             console.log(error);
         })
     );
 });
 
-self.addEventListener('activate', function (event) {
-    event.waitUntil(
+self.addEventListener('activate', function(e) {
+    e.waitUntil(
         caches.keys().then(function (cacheNames) {
             return Promise.all(
                 cacheNames.filter(function (cacheName) {
-                    return cacheName.startsWith('restaurant-') &&
+                    return cacheName.startsWith('restaurant-stg1-') &&
                         cacheName != staticCacheName;
                 }).map(function (cacheName) {
                     return caches.delete(cacheName);
@@ -48,10 +47,10 @@ self.addEventListener('activate', function (event) {
     );
 });
 
-self.addEventListener('fetch', function (event) {
-    event.respondWith(
-        caches.match(event.request).then(function (response) {
-            return response || fetch(event.request);
+self.addEventListener('fetch', function(e) {
+    e.respondWith(
+        caches.match(e.request).then(function (response) {
+            return response || fetch(e.request);
         })
     );
 });
